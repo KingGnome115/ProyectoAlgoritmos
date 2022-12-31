@@ -1,8 +1,9 @@
 import random
+import matplotlib.pyplot as plt
 
 tamaño_poblacion = 5
 n=2
-numero_generaciones = 10000
+numero_generaciones = 1000
 poblacion = []
 tasa_mutacion = 0.5
 
@@ -102,6 +103,10 @@ def reproducir_mutar(individuos_seleccionados):
 
 #Iniciamos el programa
 def main():
+    x = []
+    yMax = []
+    yPro = []
+    yMin = []
     poblacion = inicializar_poblacion()
     print("Población inicial: ", poblacion)
     print("\n")
@@ -110,16 +115,24 @@ def main():
         individuos_seleccionados = seleccionar_individuo(resultados, (tamaño_poblacion//2)+1, poblacion)
         poblacion = reproducir_mutar(individuos_seleccionados)
         calificacion = funcion_Aptitud(individuos_seleccionados[0])
-        print("Generación: ", i)
-        print("Población: ", poblacion)
-        print("Resultados: ", resultados)
-        print("Individuos seleccionados: ", individuos_seleccionados)
-        print("Mejor individuo: ", individuos_seleccionados[0])
-        print("Calificación del mejor individuo: ", calificacion)
-        print("Errores antes de terminar: ", resultados)
-        print("\n")
+        #print("Generación: ", i)
+        x.append(i)
+        #print("Población: ", poblacion)
+        #print("Resultados: ", resultados)
+        #print("Individuos seleccionados: ", individuos_seleccionados)
+        #print("Mejor individuo: ", individuos_seleccionados[0])
+        #print("Calificación del mejor individuo: ", calificacion)
+        #print("Errores antes de terminar: ", resultados)
+        yMax.append(max(funcion_Aptitud(individuo) for individuo in poblacion))
+        yPro.append(sum(funcion_Aptitud(individuo) for individuo in poblacion)/len(poblacion))
+        yMin.append(min(funcion_Aptitud(individuo) for individuo in poblacion))
+        #print("\n")
         if calificacion == 0:
             break
-
+    fig, ax = plt.subplots()
+    ax.plot(x , yMax, color='red')
+    ax.plot(x , yPro, color='blue')
+    ax.plot(x , yMin, color='green')
+    plt.show()
 if __name__ == "__main__":
     main()
