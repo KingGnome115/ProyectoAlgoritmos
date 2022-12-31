@@ -1,11 +1,11 @@
 import random
 import matplotlib.pyplot as plt
 
-tamaño_poblacion = 5
+tamaño_poblacion = 10
 n=2
-numero_generaciones = 1000
+numero_generaciones = 100
 poblacion = []
-tasa_mutacion = 0.5
+tasa_mutacion = 0.1
 
 def crear_Individuo(n):
     individuo = []
@@ -123,6 +123,10 @@ def main():
         #print("Mejor individuo: ", individuos_seleccionados[0])
         #print("Calificación del mejor individuo: ", calificacion)
         #print("Errores antes de terminar: ", resultados)
+        cuboMagico = dividir_Arreglo(individuos_seleccionados[0])
+        for fila in cuboMagico:
+            print(fila)
+        print("\n")
         yMax.append(max(funcion_Aptitud(individuo) for individuo in poblacion))
         yPro.append(sum(funcion_Aptitud(individuo) for individuo in poblacion)/len(poblacion))
         yMin.append(min(funcion_Aptitud(individuo) for individuo in poblacion))
@@ -133,6 +137,7 @@ def main():
     ax.plot(x , yMax, color='red')
     ax.plot(x , yPro, color='blue')
     ax.plot(x , yMin, color='green')
+    ax.set_title('Gráfica de aptitud')
     plt.show()
 if __name__ == "__main__":
     main()
