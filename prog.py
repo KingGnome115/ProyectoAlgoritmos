@@ -1,11 +1,12 @@
 import random
 import matplotlib.pyplot as plt
 
-tamaño_poblacion = 10
-n=2
-numero_generaciones = 100
+tamaño_poblacion = 50
+n=7
+numero_generaciones = 10000
 poblacion = []
-tasa_mutacion = 0.1
+tasa_mutacion = 1
+pathGuardarGrafico = "grafico10.png"
 
 def crear_Individuo(n):
     individuo = []
@@ -81,9 +82,12 @@ def reproducir(individuo1, individuo2):
     return hijo1, hijo2
 
 def mutar(individuo):
-    for i in range(len(individuo)):
-        if random.random() < tasa_mutacion:
-            individuo[i] = random.randint(1, len(individuo))
+    if random.random() < tasa_mutacion:
+        posicion1 = random.randint(0, len(individuo)-1)
+        posicion2 = random.randint(0, len(individuo)-1)
+        while posicion1 == posicion2:
+            posicion2 = random.randint(0, len(individuo)-1)
+        individuo[posicion1], individuo[posicion2] = individuo[posicion2], individuo[posicion1]
     return individuo
 
 def reproducir_mutar(individuos_seleccionados):
@@ -109,20 +113,20 @@ def main():
     yMin = []
     poblacion = inicializar_poblacion()
     print("Población inicial: ", poblacion)
+    print("Tamaño de la población: ", len(poblacion))
+    print("Tamaño de cuadro mágico: ", n)
+    print("Numero de generaciones: ", numero_generaciones)
+    print("Tasa de mutación: ", tasa_mutacion)
     print("\n")
     for i in range(numero_generaciones):
         resultados = evaluar_poblacion()
         individuos_seleccionados = seleccionar_individuo(resultados, (tamaño_poblacion//2)+1, poblacion)
         poblacion = reproducir_mutar(individuos_seleccionados)
         calificacion = funcion_Aptitud(individuos_seleccionados[0])
-        #print("Generación: ", i)
+        print("Generación: ", i)
         x.append(i)
-        #print("Población: ", poblacion)
-        #print("Resultados: ", resultados)
-        #print("Individuos seleccionados: ", individuos_seleccionados)
-        #print("Mejor individuo: ", individuos_seleccionados[0])
-        #print("Calificación del mejor individuo: ", calificacion)
-        #print("Errores antes de terminar: ", resultados)
+        print("Mejor individuo: ", individuos_seleccionados[0])
+        print("Calificación del mejor individuo: ", calificacion)
         cuboMagico = dividir_Arreglo(individuos_seleccionados[0])
         for fila in cuboMagico:
             print(fila)
@@ -130,7 +134,6 @@ def main():
         yMax.append(max(funcion_Aptitud(individuo) for individuo in poblacion))
         yPro.append(sum(funcion_Aptitud(individuo) for individuo in poblacion)/len(poblacion))
         yMin.append(min(funcion_Aptitud(individuo) for individuo in poblacion))
-        #print("\n")
         if calificacion == 0:
             break
     fig, ax = plt.subplots()
@@ -138,6 +141,6 @@ def main():
     ax.plot(x , yPro, color='blue')
     ax.plot(x , yMin, color='green')
     ax.set_title('Gráfica de aptitud')
-    plt.show()
+    plt.savefig(pathGuardarGrafico);
 if __name__ == "__main__":
     main()
