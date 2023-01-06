@@ -1,12 +1,14 @@
 import random
+import time
 import matplotlib.pyplot as plt
 
 tamaño_poblacion = 50
-n=7
-numero_generaciones = 10000
+n=3
+numero_generaciones = 1000
 poblacion = []
-tasa_mutacion = 1
+tasa_mutacion = 0.5
 pathGuardarGrafico = "grafico10.png"
+pathGuardarGraficoTiempo = "graficoT10.png"
 
 def crear_Individuo(n):
     individuo = []
@@ -22,24 +24,20 @@ def dividir_Arreglo(arreglo):
 
 def funcion_Aptitud(individuo):
     errores = 0
-    #Calculamos la suma de las filas
     suma_filas = []
     for fila in dividir_Arreglo(individuo):
         suma_filas.append(sum(fila))
     if len(set(suma_filas)) != 1:
         errores += 1
-    #Calculamos la suma de las columnas
     suma_columnas = []
     for i in range(n):
         suma_columnas.append(sum([fila[i] for fila in dividir_Arreglo(individuo)]))
     if len(set(suma_columnas)) != 1:
         errores += 1
-    #Calculamos la suma de las diagonales
     suma_diagonal1 = sum([fila[i] for i, fila in enumerate(dividir_Arreglo(individuo))])
     suma_diagonal2 = sum([fila[-i-1] for i, fila in enumerate(dividir_Arreglo(individuo))])
     if suma_diagonal1 != suma_diagonal2:
         errores += 1
-    #Verificamos que la suma de las diagonales sea igual a la suma de las filas y columnas
     if len(set([suma_diagonal1, suma_diagonal2] + suma_filas + suma_columnas)) != 1:
         errores += 1
     return errores
@@ -47,15 +45,6 @@ def funcion_Aptitud(individuo):
 def inicializar_poblacion():
     for i in range(tamaño_poblacion):
         individuo = crear_Individuo(n)
-        poblacion.append(individuo)
-    return poblacion
-
-def inicializar_poblacionDefault():
-    for i in range(tamaño_poblacion):
-        # Creamos un individuo de forma aleatoria utilizando el método que hemos definido anteriormente
-        #individuo = [8, 1, 6, 3, 5, 7, 4, 9, 2]
-        individuo = [2, 7, 6, 9, 5, 1, 4, 3, 8]
-        # Añadimos el individuo a la población
         poblacion.append(individuo)
     return poblacion
 
@@ -67,11 +56,8 @@ def evaluar_poblacion():
     return resultados
 
 def seleccionar_individuo(resultados, n_individuos, poblacions):
-    #emparejamos los resultados con los individuos
     individuos_resultados = list(zip(poblacions, resultados))
-    #ordenamos los individuos de menor a mayor
     individuos_resultados.sort(key=lambda x: x[1])
-    #seleccionamos los n individuos con menor error
     individuos_seleccionados = [individuo[0] for individuo in individuos_resultados[:n_individuos]]
     return individuos_seleccionados
 
@@ -105,9 +91,9 @@ def reproducir_mutar(individuos_seleccionados):
         nueva_generacion[individuo] = mutar(nueva_generacion[individuo])
     return nueva_generacion
 
-#Iniciamos el programa
 def main():
     x = []
+    y = []
     yMax = []
     yPro = []
     yMin = []
@@ -119,6 +105,7 @@ def main():
     print("Tasa de mutación: ", tasa_mutacion)
     print("\n")
     for i in range(numero_generaciones):
+        start_time = time.time()
         resultados = evaluar_poblacion()
         individuos_seleccionados = seleccionar_individuo(resultados, (tamaño_poblacion//2)+1, poblacion)
         poblacion = reproducir_mutar(individuos_seleccionados)
@@ -134,6 +121,8 @@ def main():
         yMax.append(max(funcion_Aptitud(individuo) for individuo in poblacion))
         yPro.append(sum(funcion_Aptitud(individuo) for individuo in poblacion)/len(poblacion))
         yMin.append(min(funcion_Aptitud(individuo) for individuo in poblacion))
+        elapsed_time = time.time() - start_time
+        y.append(elapsed_time)
         if calificacion == 0:
             break
     fig, ax = plt.subplots()
@@ -142,5 +131,11 @@ def main():
     ax.plot(x , yMin, color='green')
     ax.set_title('Gráfica de aptitud')
     plt.savefig(pathGuardarGrafico);
+
+    fig, ax = plt.subplots()
+    ax.plot(x , y, color='red')
+    ax.set_title('Gráfica de tiempo')
+    plt.savefig(pathGuardarGraficoTiempo);
+
 if __name__ == "__main__":
     main()
