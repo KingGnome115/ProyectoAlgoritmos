@@ -1,12 +1,13 @@
 import random
 import time
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 tamaño_poblacion = 50
-n=3
-numero_generaciones = 1000
+n=6
+numero_generaciones = 10000
 poblacion = []
-tasa_mutacion = 0.5
+tasa_mutacion = 0.6
 pathGuardarGrafico = "grafico10.png"
 pathGuardarGraficoTiempo = "graficoT10.png"
 
@@ -120,7 +121,10 @@ def main():
         print("\n")
         yMax.append(max(funcion_Aptitud(individuo) for individuo in poblacion))
         yPro.append(sum(funcion_Aptitud(individuo) for individuo in poblacion)/len(poblacion))
-        yMin.append(min(funcion_Aptitud(individuo) for individuo in poblacion))
+        mini = (min(funcion_Aptitud(individuo) for individuo in poblacion))
+        if(mini == 0):
+            mini = 1
+        yMin.append(mini)
         elapsed_time = time.time() - start_time
         y.append(elapsed_time)
         if calificacion == 0:
@@ -130,6 +134,13 @@ def main():
     ax.plot(x , yPro, color='blue')
     ax.plot(x , yMin, color='green')
     ax.set_title('Gráfica de aptitud')
+    #Agregar signifcado a los colores
+    red_patch = mpatches.Patch(color='red', label='Máximo')
+    blue_patch = mpatches.Patch(color='blue', label='Promedio')
+    green_patch = mpatches.Patch(color='green', label='Mínimo')
+    plt.legend(handles=[red_patch, blue_patch, green_patch])
+
+
     plt.savefig(pathGuardarGrafico);
 
     fig, ax = plt.subplots()
